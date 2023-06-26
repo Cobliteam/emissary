@@ -7,7 +7,7 @@ include build-aux/tools.mk
 
 # To support contributors building project on M1 Macs we will default container builds to run as linux/amd64 rather than
 # the host architecture. Setting the corresponding environment variable allows overriding it if want to work with other architectures.
-BUILD_ARCH ?= linux/amd64
+BUILD_ARCH ?= linux/arm64
 
 # Bootstrapping the build env
 #
@@ -16,7 +16,7 @@ BUILD_ARCH ?= linux/amd64
 # for bootstrapping the build env.  Don't use them directly (not via
 # go-version.txt) except for bootstrapping.
 _go-version/deps = docker/base-python/Dockerfile
-_go-version/cmd = sed -En 's,.*https://dl\.google\.com/go/go([0-9a-z.-]*)\.linux-amd64\.tar\.gz.*,\1,p' < $(_go-version/deps)
+_go-version/cmd = sed -En 's,.*https://dl\.google\.com/go/go([0-9a-z.-]*)\.linux-arm64\.tar\.gz.*,\1,p' < $(_go-version/deps)
 ifneq ($(MAKECMDGOALS),$(OSS_HOME)/build-aux/go-version.txt)
   $(call _prelude.go.ensure,$(shell $(_go-version/cmd)))
   ifneq ($(filter $(shell go env GOROOT),$(subst :, ,$(shell go env GOPATH))),)

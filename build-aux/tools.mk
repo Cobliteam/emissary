@@ -129,7 +129,7 @@ $(tools.bindir)/k3d: $(tools.mk)
 # invalid Python if you name an Enum member the same as a Python keyword.
 tools/protoc    = $(tools.bindir)/protoc
 PROTOC_VERSION  = 21.5
-PROTOC_ZIP     := protoc-$(PROTOC_VERSION)-$(patsubst darwin,osx,$(GOHOSTOS))-$(patsubst arm64,aarch_64,$(shell uname -m)).zip
+PROTOC_ZIP     := protoc-$(PROTOC_VERSION)-$(patsubst darwin,osx,$(GOHOSTOS))-aarch_64.zip
 $(tools.dir)/downloads/$(PROTOC_ZIP):
 	mkdir -p $(@D)
 	curl --fail -L https://github.com/protocolbuffers/protobuf/releases/download/v$(PROTOC_VERSION)/$(PROTOC_ZIP) -o $@
