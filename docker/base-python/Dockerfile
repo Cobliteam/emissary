@@ -18,7 +18,7 @@
 # Third-party code
 ########################################
 
-FROM docker.io/frolvlad/alpine-glibc:alpine-3.15_glibc-2.34
+FROM ubuntu:22.04
 
 WORKDIR /buildroot
 
@@ -44,33 +44,69 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local
 # versions change.  And even then, don't get more precise with the
 # version number than we need to ensure that the pip-tools version
 # agrees.
-RUN apk --no-cache add \
-  bash \
-  gcc \
+RUN apt-get update \
+  && apt-get install -y curl gpg \
+# Docker environment preparation
+  && install -m 0755 -d /etc/apt/keyrings \
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+  && chmod a+r /etc/apt/keyrings/docker.gpg \
+  && echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  tee /etc/apt/sources.list.d/docker.list > /dev/null \
+  && apt-get update \
+# Packages installation
+  && apt-get install -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin \
   make \
+  gcc \
   musl-dev \
-  curl \
-  cython \
-  docker-cli \
   git \
   iptables \
   jq \
-  libcap \
-  libcap-dev \
+  libcap2-bin \
+  libcap2-dev \
   libffi-dev \
-  ncurses \
-  openssl-dev \
-  py3-pip=~20.3 \
-  python3=~3.9 \
+  libncurses5-dev \
+  libssl-dev \
   python3-dev \
-  rust \
+  rustc \
   cargo \
   patchelf \
   rsync \
-  sudo \
-  yaml-dev \
+  libyaml-dev \
+  build-essential \
+  zlib1g-dev \
+  libncurses5-dev \
+  libgdbm-dev \
+  libnss3-dev \
+  libssl-dev \
+  libreadline-dev \
+  libffi-dev \
+  libsqlite3-dev \
+  wget \
+  libbz2-dev \
+  ca-certificates \
+  gnupg \
+  && chmod u+s $(which docker) \
+# python installation
+  && wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz \
+  && tar -xf Python-3.9.1.tgz \
+  && ./Python-3.9.1/configure --enable-optimizations \
+  && make -j 12 \
+  && make altinstall \
+  && ln -s /usr/bin/python3.9 /usr/bin/python3 \
   && ln -s /usr/bin/python3 /usr/bin/python \
-  && chmod u+s $(which docker)
+# pip installation
+  && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
+  && python3.9 get-pip.py \
+  && pip install pip==20.3 \
+# Cython installation
+  && pip install Cython
+
 
 # Consult
 # https://github.com/jazzband/pip-tools/#versions-and-compatibility to
