@@ -98,8 +98,8 @@ RUN apt-get update \
   && ./Python-3.9.1/configure --enable-optimizations \
   && make -j 12 \
   && make altinstall \
-  && ln -s /usr/bin/python3.9 /usr/bin/python3 \
-  && ln -s /usr/bin/python3 /usr/bin/python \
+  && ln -sf /usr/bin/python3.9 /usr/bin/python3 \
+  && ln -sf /usr/bin/python3 /usr/bin/python \
 # pip installation
   && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
   && python3.9 get-pip.py \
@@ -128,7 +128,7 @@ RUN mkdir /tmp/pyyaml && \
   curl -o pyyaml-5.4.1.1.tar.gz -L https://github.com/yaml/pyyaml/archive/refs/tags/5.4.1.1.tar.gz && \
   tar xzf pyyaml-5.4.1.1.tar.gz && \
   cd pyyaml-5.4.1.1 && \
-  python3 setup.py --with-libyaml install
+  python3.9 setup.py --with-libyaml install
 
 # orjson is also special.  The wheels on PyPI rely on glibc, so we
 # need to use cargo/rustc/patchelf to build a musl-compatible version.
