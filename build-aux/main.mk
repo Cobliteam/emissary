@@ -51,7 +51,7 @@ clean: $(foreach img,$(_ocibuild-images),docker/$(img).img.tar.clean)
 # Note that there are a few images used by the test suite that are
 # defined in check.mk, rather than here.
 
-# base: Base OS; none of our specific stuff.  Used for auxiliar test images
+# base: Base OS; none of our specific stuff.  Used for auxiliary test images
 # that don't need Emissary-specific stuff.
 docker/.base.img.tar.stamp: FORCE $(tools/crane) docker/base-python/Dockerfile
 	$(tools/crane) pull $(shell gawk '$$1 == "FROM" { print $$2; quit; }' < docker/base-python/Dockerfile) $@ || test -e $@
@@ -63,12 +63,8 @@ clobber: docker/base.img.tar.clean
 #
 # At the moment, it also includes some other stuff too (kubectl...),
 # but including those things at such an early stage should be
-# understood to be debt from a previous build system, and not
-# something we're actually happy with.
-#
-# In the long-run, this will likely always be a `docker build` rather
-# than an `ocibuild`, in order to do truly base-OS-specific setup
-# (`apk add`, libc-specific compilation...).
+# understood to be debt from a previous build system.
+
 docker/.base-python.docker.stamp: FORCE docker/base-python/Dockerfile docker/base-python.docker.gen
 	docker/base-python.docker.gen >$@
 clobber: docker/base-python.docker.clean
